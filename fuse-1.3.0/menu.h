@@ -177,6 +177,18 @@ MENU_CALLBACK( menu_machine_memorybrowser );
 
 MENU_CALLBACK( menu_help_keyboard );
 MENU_CALLBACK( menu_help_about );
+MENU_CALLBACK( menu_virtualkeyboard );
+MENU_CALLBACK( menu_game_list );
+MENU_CALLBACK( menu_game_fav );
+MENU_CALLBACK( menu_game_sdcard );
+MENU_CALLBACK( menu_game_save );
+MENU_CALLBACK( menu_game_load );
+MENU_CALLBACK( menu_game_info );
+MENU_CALLBACK( menu_game_remap_keys );
+MENU_CALLBACK( menu_game_settings );
+MENU_CALLBACK( menu_game_exit );
+MENU_CALLBACK( menu_game_apply_pokes );
+MENU_CALLBACK( menu_hall_of_fame );
 
 /* Called from elsewhere (generally from one of the routines defined
    in menu.c) */

@@ -59,6 +59,8 @@ extern int sound_framesiz;
 
 extern int sound_stereo_ay;
 
+void clearAudioCache();
+
 /* The low-level sound interface */
 
 int sound_lowlevel_init( const char *device, int *freqptr, int *stereoptr );

@@ -1,0 +1,46 @@
+--- Makefile	2016-10-16 10:59:15.000000000 +0100
++++ Makefile.OK	2016-10-16 11:03:20.000000000 +0100
+@@ -282,7 +282,8 @@
+ 	ui/widget/menu.c ui/widget/menu_data.c ui/widget/options.c \
+ 	ui/widget/picture.c ui/widget/pokefinder.c ui/widget/pokemem.c \
+ 	ui/widget/query.c ui/widget/roms.c ui/widget/select.c \
+-	ui/widget/text.c ui/widget/widget_internals.h \
++	ui/widget/text.c ui/widget/virtualkeyboard.c \
++	ui/widget/widget_internals.h \
+ 	ui/widget/widget.c ui/widget/widget.h ui/wii/keysyms.c \
+ 	ui/wii/wiidisplay.c ui/wii/wiidisplay.h ui/wii/wiijoystick.c \
+ 	ui/wii/wiikeyboard.c ui/wii/wiikeyboard.h ui/wii/wiikeysyms.h \
+@@ -385,7 +386,7 @@
+ 	ui/widget/pokefinder.$(OBJEXT) ui/widget/pokemem.$(OBJEXT) \
+ 	ui/widget/query.$(OBJEXT) ui/widget/roms.$(OBJEXT) \
+ 	ui/widget/select.$(OBJEXT) ui/widget/text.$(OBJEXT) \
+-	ui/widget/widget.$(OBJEXT)
++	ui/widget/virtualkeyboard.$(OBJEXT) ui/widget/widget.$(OBJEXT)
+ am__objects_26 = $(am__objects_25)
+ am__objects_27 = ui/wii/keysyms.$(OBJEXT) ui/wii/wiidisplay.$(OBJEXT) \
+ 	ui/wii/wiijoystick.$(OBJEXT) ui/wii/wiikeyboard.$(OBJEXT) \
+@@ -1141,6 +1142,7 @@
+                   ui/widget/roms.c \
+                   ui/widget/select.c \
+                   ui/widget/text.c \
++                  ui/widget/virtualkeyboard.c \
+                   ui/widget/widget_internals.h \
+                   ui/widget/widget.c \
+                   ui/widget/widget.h
+@@ -1801,6 +1803,8 @@
+ 	ui/widget/$(DEPDIR)/$(am__dirstamp)
+ ui/widget/text.$(OBJEXT): ui/widget/$(am__dirstamp) \
+ 	ui/widget/$(DEPDIR)/$(am__dirstamp)
++ui/widget/virtualkeyboard.$(OBJECT): ui/widget/$(am__dirstamp) \
++	ui/widget/$(DEPDIR)/$(am__dirstamp)
+ ui/widget/widget.$(OBJEXT): ui/widget/$(am__dirstamp) \
+ 	ui/widget/$(DEPDIR)/$(am__dirstamp)
+ ui/wii/$(am__dirstamp):
+@@ -2172,6 +2176,7 @@
+ include ui/widget/$(DEPDIR)/roms.Po
+ include ui/widget/$(DEPDIR)/select.Po
+ include ui/widget/$(DEPDIR)/text.Po
++include ui/widget/$(DEPDIR)/virtualkeyboard.Po
+ include ui/widget/$(DEPDIR)/widget.Po
+ include ui/wii/$(DEPDIR)/keysyms.Po
+ include ui/wii/$(DEPDIR)/wiidisplay.Po

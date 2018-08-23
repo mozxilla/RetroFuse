@@ -269,6 +269,9 @@ int widget_query_save_draw( void *data );
 void widget_query_save_keyhandler( input_key key );
 int widget_query_finish( widget_finish_state finished );
 
+int widget_virtualkeyboard_draw( void *data );
+void widget_virtualkeyboard_keyhandler( input_key key );
+
 /* The widgets actually available */
 
 extern widget_t widget_data[];

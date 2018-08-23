@@ -693,6 +693,7 @@ widget_t widget_data[] = {
   { widget_query_draw,    widget_query_finish,	 widget_query_keyhandler    },
   { widget_query_save_draw,widget_query_finish,	 widget_query_save_keyhandler },
   { widget_diskoptions_draw, widget_options_finish, widget_diskoptions_keyhandler  },
+  { widget_virtualkeyboard_draw,NULL,            widget_virtualkeyboard_keyhandler },
 };
 
 #ifndef UI_SDL
@@ -788,12 +789,12 @@ ui_popup_menu( int native_key )
     break;
   case INPUT_KEY_F2:
     fuse_emulation_pause();
-    menu_file_savesnapshot( 0 );
+    menu_virtualkeyboard( 0 );
     fuse_emulation_unpause();
     break;
   case INPUT_KEY_F3:
     fuse_emulation_pause();
-    menu_file_open( 0 );
+    menu_virtualkeyboard( 2 );
     fuse_emulation_unpause();
     break;
   case INPUT_KEY_F4:

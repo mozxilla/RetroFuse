@@ -47,7 +47,7 @@
 int sound_enabled = 0;		/* Are we currently using the sound card */
 
 static int sound_enabled_ever = 0; /* whether sound has *ever* been in use; see
-				      sound_ay_write() and sound_ay_reset() */
+                      sound_ay_write() and sound_ay_reset() */
 int sound_stereo_ay = SOUND_STEREO_AY_NONE; /* local copy of settings_current.stereo_ay */
 
 /* assume all three tone channels together match the beeper volume (ish).
@@ -120,7 +120,7 @@ sound_get_volume( int volume )
 libspectrum_dword
 sound_get_effective_processor_speed( void )
 {
-  return machine_current->timings.processor_speed / 100 * 
+  return machine_current->timings.processor_speed / 100 *
            settings_current.emulation_speed;
 }
 
@@ -178,122 +178,132 @@ sound_ay_init( void )
   ay_change_count = 0;
 }
 
+int doSoundInit = 0;
+
+void clearAudioCache()
+{
+    doSoundInit = 1;
+}
+
 void
 sound_init( const char *device )
 {
-  float hz;
-  double treble;
-  Blip_Synth **ay_left_synth;
-  Blip_Synth **ay_mid_synth;
-  Blip_Synth **ay_mid_synth_r;
-  Blip_Synth **ay_right_synth;
+  if (doSoundInit == 1) {
+      float hz;
+      double treble;
+      Blip_Synth **ay_left_synth;
+      Blip_Synth **ay_mid_synth;
+      Blip_Synth **ay_mid_synth_r;
+      Blip_Synth **ay_right_synth;
 
-  /* Allow sound as long as emulation speed is greater than 2%
-     (less than that and a single Speccy frame generates more
-     than a seconds worth of sound which is bigger than the
-     maximum Blip_Buffer of 1 second) */
-  if( !( !sound_enabled && settings_current.sound &&
-         settings_current.emulation_speed > 1 ) )
-    return;
+      /* Allow sound as long as emulation speed is greater than 2%
+         (less than that and a single Speccy frame generates more
+         than a seconds worth of sound which is bigger than the
+         maximum Blip_Buffer of 1 second) */
+      if( !( !sound_enabled && settings_current.sound &&
+             settings_current.emulation_speed > 1 ) )
+        return;
 
-  /* only try for stereo if we need it */
-  sound_stereo_ay = option_enumerate_sound_stereo_ay();
+      /* only try for stereo if we need it */
+      sound_stereo_ay = option_enumerate_sound_stereo_ay();
 
-  if( settings_current.sound &&
-      sound_lowlevel_init( device, &settings_current.sound_freq,
-                           &sound_stereo_ay ) )
-    return;
+      if( settings_current.sound &&
+          sound_lowlevel_init( device, &settings_current.sound_freq,
+                               &sound_stereo_ay ) )
+        return;
 
-  if( !sound_init_blip(&left_buf, &left_beeper_synth) ) return;
-  if( sound_stereo_ay != SOUND_STEREO_AY_NONE &&
-      !sound_init_blip(&right_buf, &right_beeper_synth) )
-    return;
+      if( !sound_init_blip(&left_buf, &left_beeper_synth) ) return;
+      if( sound_stereo_ay != SOUND_STEREO_AY_NONE &&
+          !sound_init_blip(&right_buf, &right_beeper_synth) )
+        return;
 
-  treble = speaker_type[ option_enumerate_sound_speaker_type() ].treble;
+      treble = speaker_type[ option_enumerate_sound_speaker_type() ].treble;
 
-  ay_a_synth = new_Blip_Synth();
-  blip_synth_set_volume( ay_a_synth, sound_get_volume( settings_current.volume_ay) );
-  blip_synth_set_treble_eq( ay_a_synth, treble );
+      ay_a_synth = new_Blip_Synth();
+      blip_synth_set_volume( ay_a_synth, sound_get_volume( settings_current.volume_ay) );
+      blip_synth_set_treble_eq( ay_a_synth, treble );
 
-  ay_b_synth = new_Blip_Synth();
-  blip_synth_set_volume( ay_b_synth, sound_get_volume( settings_current.volume_ay) );
-  blip_synth_set_treble_eq( ay_b_synth, treble );
+      ay_b_synth = new_Blip_Synth();
+      blip_synth_set_volume( ay_b_synth, sound_get_volume( settings_current.volume_ay) );
+      blip_synth_set_treble_eq( ay_b_synth, treble );
 
-  ay_c_synth = new_Blip_Synth();
-  blip_synth_set_volume( ay_c_synth, sound_get_volume( settings_current.volume_ay) );
-  blip_synth_set_treble_eq( ay_c_synth, treble );
+      ay_c_synth = new_Blip_Synth();
+      blip_synth_set_volume( ay_c_synth, sound_get_volume( settings_current.volume_ay) );
+      blip_synth_set_treble_eq( ay_c_synth, treble );
 
-  left_specdrum_synth = new_Blip_Synth();
-  blip_synth_set_volume( left_specdrum_synth, sound_get_volume( settings_current.volume_specdrum ) );
-  blip_synth_set_output( left_specdrum_synth, left_buf );
-  blip_synth_set_treble_eq( left_specdrum_synth, treble );
-  
-  /* important to override these settings if not using stereo
-   * (it would probably be confusing to mess with the stereo
-   * settings in settings_current though, which is why we make copies
-   * rather than using the real ones).
-   */
+      left_specdrum_synth = new_Blip_Synth();
+      blip_synth_set_volume( left_specdrum_synth, sound_get_volume( settings_current.volume_specdrum ) );
+      blip_synth_set_output( left_specdrum_synth, left_buf );
+      blip_synth_set_treble_eq( left_specdrum_synth, treble );
 
-  ay_a_synth_r = NULL;
-  ay_b_synth_r = NULL;
-  ay_c_synth_r = NULL;
+      /* important to override these settings if not using stereo
+       * (it would probably be confusing to mess with the stereo
+       * settings in settings_current though, which is why we make copies
+       * rather than using the real ones).
+       */
 
-  if( sound_stereo_ay != SOUND_STEREO_AY_NONE ) {
-    /* Attach the Blip_Synth's we've already created as appropriate, and
-     * create one more Blip_Synth for the middle channel's right buffer. */
-    if( sound_stereo_ay == SOUND_STEREO_AY_ACB ) {
-      ay_left_synth = &ay_a_synth;
-      ay_mid_synth = &ay_c_synth;
-      ay_mid_synth_r = &ay_c_synth_r;
-      ay_right_synth = &ay_b_synth;
-    } else if ( sound_stereo_ay == SOUND_STEREO_AY_ABC ) {
-      ay_left_synth = &ay_a_synth;
-      ay_mid_synth = &ay_b_synth;
-      ay_mid_synth_r = &ay_b_synth_r;
-      ay_right_synth = &ay_c_synth;
-    } else {
-      ui_error( UI_ERROR_ERROR, "unknown AY stereo separation type: %d", sound_stereo_ay );
-      fuse_abort();
-    }
+      ay_a_synth_r = NULL;
+      ay_b_synth_r = NULL;
+      ay_c_synth_r = NULL;
 
-    blip_synth_set_output( *ay_left_synth, left_buf );
-    blip_synth_set_output( *ay_mid_synth, left_buf );
-    blip_synth_set_output( *ay_right_synth, right_buf );
+      if( sound_stereo_ay != SOUND_STEREO_AY_NONE ) {
+        /* Attach the Blip_Synth's we've already created as appropriate, and
+         * create one more Blip_Synth for the middle channel's right buffer. */
+        if( sound_stereo_ay == SOUND_STEREO_AY_ACB ) {
+          ay_left_synth = &ay_a_synth;
+          ay_mid_synth = &ay_c_synth;
+          ay_mid_synth_r = &ay_c_synth_r;
+          ay_right_synth = &ay_b_synth;
+        } else if ( sound_stereo_ay == SOUND_STEREO_AY_ABC ) {
+          ay_left_synth = &ay_a_synth;
+          ay_mid_synth = &ay_b_synth;
+          ay_mid_synth_r = &ay_b_synth_r;
+          ay_right_synth = &ay_c_synth;
+        } else {
+          ui_error( UI_ERROR_ERROR, "unknown AY stereo separation type: %d", sound_stereo_ay );
+          fuse_abort();
+        }
 
-    *ay_mid_synth_r = new_Blip_Synth();
-    blip_synth_set_volume( *ay_mid_synth_r,
-                           sound_get_volume( settings_current.volume_ay ) );
-    blip_synth_set_output( *ay_mid_synth_r, right_buf );
-    blip_synth_set_treble_eq( *ay_mid_synth_r, treble );
+        blip_synth_set_output( *ay_left_synth, left_buf );
+        blip_synth_set_output( *ay_mid_synth, left_buf );
+        blip_synth_set_output( *ay_right_synth, right_buf );
 
-    right_specdrum_synth = new_Blip_Synth();
-    blip_synth_set_volume( right_specdrum_synth, sound_get_volume( settings_current.volume_specdrum ) );
-    blip_synth_set_output( right_specdrum_synth, right_buf );
-    blip_synth_set_treble_eq( right_specdrum_synth, treble );
-  } else {
-    blip_synth_set_output( ay_a_synth, left_buf );
-    blip_synth_set_output( ay_b_synth, left_buf );
-    blip_synth_set_output( ay_c_synth, left_buf );
+        *ay_mid_synth_r = new_Blip_Synth();
+        blip_synth_set_volume( *ay_mid_synth_r,
+                               sound_get_volume( settings_current.volume_ay ) );
+        blip_synth_set_output( *ay_mid_synth_r, right_buf );
+        blip_synth_set_treble_eq( *ay_mid_synth_r, treble );
+
+        right_specdrum_synth = new_Blip_Synth();
+        blip_synth_set_volume( right_specdrum_synth, sound_get_volume( settings_current.volume_specdrum ) );
+        blip_synth_set_output( right_specdrum_synth, right_buf );
+        blip_synth_set_treble_eq( right_specdrum_synth, treble );
+      } else {
+        blip_synth_set_output( ay_a_synth, left_buf );
+        blip_synth_set_output( ay_b_synth, left_buf );
+        blip_synth_set_output( ay_c_synth, left_buf );
+      }
+
+      sound_enabled = sound_enabled_ever = 1;
+
+      sound_channels = ( sound_stereo_ay != SOUND_STEREO_AY_NONE ? 2 : 1 );
+
+      /* Adjust relative processor speed to deal with adjusting sound generation
+         frequency against emulation speed (more flexible than adjusting generated
+         sample rate) */
+      hz = ( float )sound_get_effective_processor_speed() /
+                    machine_current->timings.tstates_per_frame;
+
+      /* Size of audio data we will get from running a single Spectrum frame */
+      sound_framesiz = ( float )settings_current.sound_freq / hz;
+      sound_framesiz++;
+
+      samples = libspectrum_new0( blip_sample_t, sound_framesiz * sound_channels );
+      /* initialize movie settings... */
+      movie_init_sound( settings_current.sound_freq, sound_stereo_ay );      
   }
 
-  sound_enabled = sound_enabled_ever = 1;
-
-  sound_channels = ( sound_stereo_ay != SOUND_STEREO_AY_NONE ? 2 : 1 );
-
-  /* Adjust relative processor speed to deal with adjusting sound generation
-     frequency against emulation speed (more flexible than adjusting generated
-     sample rate) */
-  hz = ( float )sound_get_effective_processor_speed() /
-                machine_current->timings.tstates_per_frame;
-
-  /* Size of audio data we will get from running a single Spectrum frame */
-  sound_framesiz = ( float )settings_current.sound_freq / hz;
-  sound_framesiz++;
-
-  samples = libspectrum_new0( blip_sample_t, sound_framesiz * sound_channels );
-  /* initialize movie settings... */
-  movie_init_sound( settings_current.sound_freq, sound_stereo_ay );
-
+  doSoundInit = 0;
 }
 
 void
@@ -316,27 +326,30 @@ sound_unpause( void )
 void
 sound_end( void )
 {
-  if( sound_enabled ) {
-    delete_Blip_Synth( &left_beeper_synth );
-    delete_Blip_Synth( &right_beeper_synth );
+  if (doSoundInit == 1) {
+      if( sound_enabled ) {
+        delete_Blip_Synth( &left_beeper_synth );
+        delete_Blip_Synth( &right_beeper_synth );
 
-    delete_Blip_Synth( &ay_a_synth );
-    delete_Blip_Synth( &ay_b_synth );
-    delete_Blip_Synth( &ay_c_synth );
-    delete_Blip_Synth( &ay_a_synth_r );
-    delete_Blip_Synth( &ay_b_synth_r );
-    delete_Blip_Synth( &ay_c_synth_r );
+        delete_Blip_Synth( &ay_a_synth );
+        delete_Blip_Synth( &ay_b_synth );
+        delete_Blip_Synth( &ay_c_synth );
+        delete_Blip_Synth( &ay_a_synth_r );
+        delete_Blip_Synth( &ay_b_synth_r );
+        delete_Blip_Synth( &ay_c_synth_r );
 
-    delete_Blip_Synth( &left_specdrum_synth );
-    delete_Blip_Synth( &right_specdrum_synth );
+        delete_Blip_Synth( &left_specdrum_synth );
+        delete_Blip_Synth( &right_specdrum_synth );
 
-    delete_Blip_Buffer( &left_buf );
-    delete_Blip_Buffer( &right_buf );
+        delete_Blip_Buffer( &left_buf );
+        delete_Blip_Buffer( &right_buf );
 
-    if( settings_current.sound ) 
-      sound_lowlevel_end();
-    libspectrum_free( samples );
-    sound_enabled = 0;
+            if( settings_current.sound )
+                sound_lowlevel_end();
+
+        libspectrum_free( samples );
+        sound_enabled = 0;
+      }
   }
 }
 
@@ -658,7 +671,7 @@ sound_frame( void )
     count = blip_buffer_read_samples( left_buf, samples, sound_framesiz, BLIP_BUFFER_DEF_STEREO );
   }
 
-  if( settings_current.sound ) 
+  if( settings_current.sound )
     sound_lowlevel_frame( samples, count );
 
   if( movie_recording )

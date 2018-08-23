@@ -35,4 +35,6 @@ int fbkeyboard_end(void);
 
 void keyboard_update(void);
 
+void setVirtualKeys(unsigned char *);
+
 #endif			/* #ifndef FUSE_FBKEYBOARD_H */

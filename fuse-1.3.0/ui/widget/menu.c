@@ -447,6 +447,11 @@ menu_file_exit( int action )
   widget_end_all( WIDGET_FINISHED_OK );
 }
 
+fuse_exit( int action )
+{
+  fuse_exiting = 1;
+}
+
 void
 menu_options_general( int action )
 {
@@ -724,6 +729,91 @@ void
 menu_help_about( int action )
 {
   widget_do_about();
+}
+
+void
+menu_virtualkeyboard( int action )
+{
+  widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, action );
+}
+
+void
+menu_game_list( int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 1);
+}
+
+void
+menu_game_info( int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 2);
+}
+
+void
+menu_game_settings( int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 3);
+}
+
+void
+menu_game_sdcard( int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 4);
+}
+
+void
+menu_game_save( int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 5);
+}
+
+void
+menu_game_load( int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 6);
+}
+
+void
+menu_game_fav (int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 7);
+}
+
+void
+menu_game_remap_keys( int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 8);
+}
+
+void
+menu_hall_of_fame( int action )
+{
+    widget_do( WIDGET_TYPE_VIRTUALKEYBOARD, 10);
+}
+
+void
+menu_game_apply_pokes( int action )
+{
+    vegaApplyPokes();
+    widget_end_all( WIDGET_FINISHED_CANCEL );
+    display_refresh_all();
+}
+
+void
+menu_game_exit( int action )
+{
+    printf("\nExiting");
+    fflush(stdout);
+    if (ui_widget_level > -1) {
+        input_event_t fuse_event;
+
+        fuse_event.type = INPUT_EVENT_KEYPRESS;
+        fuse_event.types.key.native_key = INPUT_KEY_Escape;
+        fuse_event.types.key.spectrum_key = INPUT_KEY_Escape;
+
+        input_event( &fuse_event );
+    }
+    fuse_exit(0);
 }
 
 static int

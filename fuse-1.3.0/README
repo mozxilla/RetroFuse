@@ -1,3 +1,26 @@
+The Free Unix Spectrum Emulator (Fuse) 1.3.0 for the Vega+ device
+=================================================================
+
+The following source code contains a modified version of Fuse that includes
+software patches to run on the Vega+ device. 
+
+The project is built using a computer running Ubuntu 14.04.5 LTS.
+The 'patch' folder contains a configure script that is used to configure the project. 
+It assumes a valid Yocto installation (fsl-community-bsp-krogoth) on /opt/poky/vega-one.
+
+To compile fuse for the Vega+ device please use the following commands:
+
+retro-1.3.0$ . /opt/poky/vega-one/environment-setup-armv5e-poky-linux-gnueabi
+retro-1.3.0$ ./patch/configure
+retro-1.3.0$ make
+
+Please note that you might have to run the ./patch/configure command twice when running for the very first time.
+
+
+
+
+
+
 The Free Unix Spectrum Emulator (Fuse) 1.3.0
 ============================================
 
